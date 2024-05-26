@@ -21,8 +21,9 @@ export class JobController {
   constructor(private jobService: JobService) {}
 
   @Get('')
-  find() {
-    return this.jobService.find();
+  find(@Request() request) {
+    const user: User = request['user'];
+    return this.jobService.find(user.accountId);
   }
 
   @Get(':id')

@@ -5,8 +5,11 @@ import Job from '../models/job.entity';
 export class JobService {
   constructor(@Inject('JOB_REPO') private repository: typeof Job) {}
 
-  find() {
+  find(accountId: string) {
     return this.repository.findAll({
+      where: {
+        accountId,
+      },
       order: [['name', 'asc']],
     });
   }

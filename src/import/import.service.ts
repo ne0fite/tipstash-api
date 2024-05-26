@@ -37,16 +37,15 @@ export class ImportService {
 
       const workDate = DateTime.fromFormat(date, 'M/d/yy')
         .setZone('US/Central')
-        .startOf('day')
         .toJSDate();
 
-      const clockInDate = DateTime.fromFormat(clockIn, 'M/d/yy h:mm a')
-        .setZone('US/Central')
-        .toJSDate();
+      const clockInDate = DateTime.fromFormat(clockIn, 'M/d/yy h:mm a', {
+        zone: 'US/Central',
+      }).toJSDate();
 
-      const clockOutDate = DateTime.fromFormat(clockOut, 'M/d/yy h:mm a')
-        .setZone('US/Central')
-        .toJSDate();
+      const clockOutDate = DateTime.fromFormat(clockOut, 'M/d/yy h:mm a', {
+        zone: 'US/Central',
+      }).toJSDate();
 
       let job = jobMap.get(jobName);
       if (job == null) {
