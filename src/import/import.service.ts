@@ -14,7 +14,7 @@ export class ImportService {
     private shiftService: ShiftService,
   ) {}
 
-  async importShiftJson(shiftData: any[]) {
+  async importShiftJson(shiftData: any[], accountId: string) {
     const jobMap = new Map<string, Job>();
     const result = {
       imported: 0,
@@ -52,17 +52,19 @@ export class ImportService {
       if (job == null) {
         job = await this.jobRepository.findOne({
           where: {
+            accountId,
             name: jobName,
           },
         });
         if (!job) {
-          job = new Job({ name: jobName });
+          job = new Job({ accountId, name: jobName });
           await job.save();
         }
         jobMap.set(jobName, job);
       }
 
       const shift = new Shift({
+        accountId,
         jobId: job.id,
         date: workDate,
         clockIn: clockInDate,

@@ -26,8 +26,9 @@ export class JobController {
   }
 
   @Get(':id')
-  async getById(@Param() params: any) {
-    const job = await this.jobService.getById(params.id);
+  async getById(@Param() params: any, @Request() request) {
+    const user: User = request['user'];
+    const job = await this.jobService.getById(params.id, user.accountId);
     if (!job) {
       throw new NotFoundException('Job Not Found');
     }
@@ -43,8 +44,9 @@ export class JobController {
   }
 
   @Post(':id')
-  async update(@Param() params: any, @Body() body: any) {
-    const job = await this.jobService.getById(params.id);
+  async update(@Param() params: any, @Body() body: any, @Request() request) {
+    const user: User = request['user'];
+    const job = await this.jobService.getById(params.id, user.accountId);
     if (!job) {
       throw new NotFoundException('Job Not Found');
     }
@@ -53,8 +55,9 @@ export class JobController {
   }
 
   @Delete(':id')
-  async delete(@Param() params: any) {
-    const job = await this.jobService.getById(params.id);
+  async delete(@Param() params: any, @Request() request) {
+    const user: User = request['user'];
+    const job = await this.jobService.getById(params.id, user.accountId);
     if (!job) {
       throw new NotFoundException('Job Not Found');
     }

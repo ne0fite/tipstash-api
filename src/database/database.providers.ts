@@ -8,7 +8,7 @@ const dbConfig: SequelizeOptions = {
   port: parseInt(process.env.DB_PORT) || 5434,
   dialect: 'postgres',
   dialectOptions: {},
-  logging: console.log,
+  logging: false,
 };
 
 if (['production', 'stage'].includes(process.env.NODE_ENV)) {
@@ -24,7 +24,7 @@ export const databaseProviders = [
     useFactory: async () => {
       const sequelize = new Sequelize(dbConfig);
       sequelize.addModels([__dirname + '/../models']);
-      await sequelize.sync();
+      // await sequelize.sync();
       return sequelize;
     },
   },

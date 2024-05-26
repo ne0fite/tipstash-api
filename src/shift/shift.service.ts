@@ -59,7 +59,7 @@ export class ShiftService {
     @Inject('SHIFT_STATS_REPO') private shiftStatsRepository: typeof ShiftStats,
   ) {}
 
-  async find(query: QueryBuilderQuery) {
+  async find(query: QueryBuilderQuery, accountId: string) {
     const sequelize = this.shiftRepository.sequelize;
 
     const {
@@ -76,7 +76,9 @@ export class ShiftService {
     } = query;
 
     const options = {
-      where: {},
+      where: {
+        accountId,
+      },
     };
 
     if (attributes.length > 0) {
@@ -176,15 +178,19 @@ export class ShiftService {
     };
   }
 
-  getById(id) {
+  getById(id: string, accountId: string) {
     const options = {
+      where: {
+        id,
+        accountId,
+      },
       include: [
         {
           model: Job,
         },
       ],
     };
-    return this.shiftRepository.findByPk(id, options);
+    return this.shiftRepository.findOne(options);
   }
 
   save(shift: Shift) {

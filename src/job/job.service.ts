@@ -11,8 +11,13 @@ export class JobService {
     });
   }
 
-  getById(id) {
-    return this.repository.findByPk(id);
+  getById(id, accountId) {
+    return this.repository.findOne({
+      where: {
+        id,
+        accountId,
+      },
+    });
   }
 
   async save(job: Job): Promise<Job> {

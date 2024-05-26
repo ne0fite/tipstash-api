@@ -22,13 +22,15 @@ export class ShiftController {
   constructor(private shiftService: ShiftService) {}
 
   @Get('')
-  find(@Query() query) {
-    return this.shiftService.find(query);
+  find(@Query() query, @Request() request) {
+    const user: User = request['user'];
+    return this.shiftService.find(query, user.accountId);
   }
 
   @Get(':id')
-  async getById(@Param() params: any) {
-    const shift = await this.shiftService.getById(params.id);
+  async getById(@Param() params: any, @Request() request) {
+    const user: User = request['user'];
+    const shift = await this.shiftService.getById(params.id, user.accountId);
     if (!shift) {
       throw new NotFoundException('Shift Not Found');
     }
@@ -45,8 +47,9 @@ export class ShiftController {
   }
 
   @Post(':id')
-  async update(@Param() params: any, @Body() body: any) {
-    const shift = await this.shiftService.getById(params.id);
+  async update(@Param() params: any, @Body() body: any, @Request() request) {
+    const user: User = request['user'];
+    const shift = await this.shiftService.getById(params.id, user.accountId);
     if (!shift) {
       throw new NotFoundException('Shift Not Found');
     }
@@ -56,8 +59,9 @@ export class ShiftController {
   }
 
   @Delete(':id')
-  async delete(@Param() params: any) {
-    const shift = await this.shiftService.getById(params.id);
+  async delete(@Param() params: any, @Request() request) {
+    const user: User = request['user'];
+    const shift = await this.shiftService.getById(params.id, user.accountId);
     if (!shift) {
       throw new NotFoundException('Shift Not Found');
     }
