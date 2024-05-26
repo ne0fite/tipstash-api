@@ -1,4 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { DateTime } from 'luxon';
+
 import Job from '../models/job.entity';
 import Shift from '../models/shift.entity';
 import { ShiftService } from '../shift/shift.service';
@@ -24,14 +26,27 @@ export class ImportService {
 
       const {
         'Job Name': jobName,
-        ' Tip Amount ': amount,
-        ' Tip Out ': tipOut,
+        'Tip Amount': amount,
+        'Tip Out': tipOut,
         'Work Date': date,
         'Clock In': clockIn,
         'Clock Out': clockOut,
-        ' Sales ': sales,
+        Sales: sales,
         Notes: notes = '',
       } = shiftJson;
+
+      const workDate = DateTime.fromFormat(date, 'M/d/yy')
+        .setZone('US/Central')
+        .startOf('day')
+        .toJSDate();
+
+      const clockInDate = DateTime.fromFormat(clockIn, 'M/d/yy h:mm a')
+        .setZone('US/Central')
+        .toJSDate();
+
+      const clockOutDate = DateTime.fromFormat(clockOut, 'M/d/yy h:mm a')
+        .setZone('US/Central')
+        .toJSDate();
 
       let job = jobMap.get(jobName);
       if (job == null) {
@@ -49,12 +64,12 @@ export class ImportService {
 
       const shift = new Shift({
         jobId: job.id,
-        date: this.excelDateToJSDate(date),
-        clockIn: this.excelDateToJSDate(clockIn),
-        clockOut: this.excelDateToJSDate(clockOut),
-        amount,
-        sales,
-        tipOut,
+        date: workDate,
+        clockIn: clockInDate,
+        clockOut: clockOutDate,
+        amount: this.parseNumber(amount),
+        sales: this.parseNumber(sales),
+        tipOut: this.parseNumber(tipOut),
         notes,
       });
 
@@ -72,6 +87,14 @@ export class ImportService {
     }
 
     return result;
+  }
+
+  parseNumber(value: string): number {
+    const numeric = value.replace(/[^\d.]/g, '');
+    if (numeric.length === 0) {
+      return 0;
+    }
+    return parseFloat(numeric);
   }
 
   excelDateToJSDate(date) {

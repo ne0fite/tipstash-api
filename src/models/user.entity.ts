@@ -7,6 +7,8 @@ import {
   UpdatedAt,
   ForeignKey,
   BelongsTo,
+  DefaultScope,
+  Scopes,
 } from 'sequelize-typescript';
 
 import Account from './account.entity';
@@ -16,6 +18,25 @@ import Account from './account.entity';
   underscored: true,
   tableName: 'user',
 })
+@DefaultScope(() => ({
+  attributes: ['id', 'accountId', 'email', 'createdAt', 'updatedAt'],
+  include: [
+    {
+      model: Account,
+      required: true,
+    },
+  ],
+}))
+@Scopes(() => ({
+  full: {
+    include: [
+      {
+        model: Account,
+        required: true,
+      },
+    ],
+  },
+}))
 export default class User extends Model {
   @Column({
     primaryKey: true,

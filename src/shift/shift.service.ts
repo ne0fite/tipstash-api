@@ -3,6 +3,7 @@ import { Op, Order } from 'sequelize';
 
 import Job from '../models/job.entity';
 import Shift from '../models/shift.entity';
+import ShiftStats from 'src/models/shift_stats.entity';
 
 type AggregateItem = {
   field: string;
@@ -53,7 +54,10 @@ type QueryBuilderQuery = {
 
 @Injectable()
 export class ShiftService {
-  constructor(@Inject('SHIFT_REPO') private shiftRepository: typeof Shift) {}
+  constructor(
+    @Inject('SHIFT_REPO') private shiftRepository: typeof Shift,
+    @Inject('SHIFT_STATS_REPO') private shiftStatsRepository: typeof ShiftStats,
+  ) {}
 
   async find(query: QueryBuilderQuery) {
     const sequelize = this.shiftRepository.sequelize;
@@ -72,11 +76,6 @@ export class ShiftService {
     } = query;
 
     const options = {
-      // include: [
-      //   {
-      //     model: Job,
-      //   },
-      // ],
       where: {},
     };
 
@@ -163,9 +162,9 @@ export class ShiftService {
       options['group'] = ['bucket'];
     }
 
-    const totalRows = await this.shiftRepository.count(options);
+    const totalRows = await this.shiftStatsRepository.count(options);
 
-    const results = await this.shiftRepository.findAll({
+    const results = await this.shiftStatsRepository.findAll({
       ...options,
       limit: take,
       offset: skip,
@@ -189,14 +188,6 @@ export class ShiftService {
   }
 
   save(shift: Shift) {
-    if (shift.clockIn && shift.clockOut) {
-      shift.hours =
-        (shift.clockOut.getTime() - shift.clockIn.getTime()) / (60 * 60 * 1000);
-      shift.tipRate = shift.amount / shift.hours;
-      shift.tipPercent = (shift.amount / shift.sales) * 100;
-      shift.wages = shift.hours * shift.job.payRate;
-    }
-
     return shift.save();
   }
 }

@@ -6,12 +6,14 @@ import {
   NotFoundException,
   Param,
   Post,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 
 import { AuthGuard } from 'src/auth/auth.guard';
 import Job from '../models/job.entity';
+import User from 'src/models/user.entity';
 
 @Controller('/api/v1/job')
 @UseGuards(AuthGuard)
@@ -33,10 +35,11 @@ export class JobController {
   }
 
   @Post('')
-  async create(@Body() body: any) {
+  async create(@Body() body: any, @Request() request) {
     const job = new Job(body);
-    await job.save();
-    return job;
+    const user: User = request['user'];
+    job.accountId = user.accountId;
+    return this.jobService.save(job);
   }
 
   @Post(':id')
@@ -46,8 +49,7 @@ export class JobController {
       throw new NotFoundException('Job Not Found');
     }
     job.update(body);
-    await job.save();
-    return job;
+    return this.jobService.save(job);
   }
 
   @Delete(':id')

@@ -6,7 +6,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as XLSX from 'xlsx';
+import * as csv from 'csvtojson';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { ImportService } from './import.service';
@@ -19,9 +19,7 @@ export class ImportController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    const workbook = XLSX.read(file.buffer);
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const json = XLSX.utils.sheet_to_json(worksheet);
+    const json = await csv().fromString(file.buffer.toString());
     const result = await this.importService.importShiftJson(json);
     return result;
   }

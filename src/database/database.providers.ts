@@ -8,7 +8,7 @@ const dbConfig: SequelizeOptions = {
   port: parseInt(process.env.DB_PORT) || 5434,
   dialect: 'postgres',
   dialectOptions: {},
-  logging: false,
+  logging: console.log,
 };
 
 if (['production', 'stage'].includes(process.env.NODE_ENV)) {

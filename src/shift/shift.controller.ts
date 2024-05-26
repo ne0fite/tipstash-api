@@ -7,12 +7,14 @@ import {
   Param,
   Post,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { ShiftService } from './shift.service';
 import Shift from '../models/shift.entity';
+import User from 'src/models/user.entity';
 
 @Controller('/api/v1/shift')
 @UseGuards(AuthGuard)
@@ -34,8 +36,10 @@ export class ShiftController {
   }
 
   @Post('')
-  async create(@Body() body: any) {
+  async create(@Body() body: any, @Request() request) {
     const shift = new Shift(body);
+    const user: User = request['user'];
+    shift.accountId = user.accountId;
     await this.shiftService.save(shift);
     return shift;
   }

@@ -15,9 +15,9 @@ import Job from './job.entity';
 @Table({
   timestamps: true,
   underscored: true,
-  tableName: 'shift',
+  tableName: 'shift_stats_vw',
 })
-export default class Shift extends Model {
+export default class ShiftStats extends Model {
   @Column({
     primaryKey: true,
     type: DataType.UUID,
@@ -39,6 +39,12 @@ export default class Shift extends Model {
   @Column(DataType.UUID)
   jobId: string;
 
+  @Column(DataType.TEXT)
+  jobName: string;
+
+  @Column(DataType.DOUBLE)
+  payRate: number;
+
   @Column(DataType.DATEONLY)
   date: Date;
 
@@ -47,6 +53,9 @@ export default class Shift extends Model {
 
   @Column(DataType.DATE)
   clockOut: Date;
+
+  @Column(DataType.DOUBLE)
+  hours: number;
 
   @Column(DataType.DOUBLE)
   amount: number;
@@ -59,6 +68,15 @@ export default class Shift extends Model {
 
   @Column(DataType.DOUBLE)
   ccTips: number;
+
+  @Column(DataType.DOUBLE)
+  tipRate: number;
+
+  @Column(DataType.DOUBLE)
+  tipPercent: number;
+
+  @Column(DataType.DOUBLE)
+  wages: number;
 
   @Column(DataType.TEXT)
   notes: string;
