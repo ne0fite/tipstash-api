@@ -101,51 +101,53 @@ export class ShiftService {
       }
     }
 
-    for (const filterItem of filter.filters) {
-      if (!options.where[filterItem.field]) {
-        options.where[filterItem.field] = {};
-      }
+    if (filter && filter.filters) {
+      for (const filterItem of filter.filters) {
+        if (!options.where[filterItem.field]) {
+          options.where[filterItem.field] = {};
+        }
 
-      let operator;
-      let filterValue: any = filterItem.value;
-      switch (filterItem.operator) {
-        case 'gt':
-          operator = Op.gt;
-          break;
-        case 'gte':
-          operator = Op.gte;
-          break;
-        case 'lte':
-          operator = Op.lte;
-          break;
-        case 'lt':
-          operator = Op.lt;
-          break;
-        case 'in':
-          operator = Op.in;
-          if (!Array.isArray(filterValue)) {
-            filterValue = filterValue.toString().split(',');
-          }
-          break;
-        case 'notin':
-          operator = Op.notIn;
-          if (!Array.isArray(filterValue)) {
-            filterValue = filterValue.toString().split(',');
-          }
-          break;
-        case 'contains':
-          operator = Op.iLike;
-          filterValue = `%${filterValue}%`;
-          break;
-        case 'notcontains':
-          operator = Op.notILike;
-          filterValue = `%${filterValue}%`;
-          break;
-        default:
-          operator = Op.eq;
-      }
+        let operator;
+        let filterValue: any = filterItem.value;
+        switch (filterItem.operator) {
+          case 'gt':
+            operator = Op.gt;
+            break;
+          case 'gte':
+            operator = Op.gte;
+            break;
+          case 'lte':
+            operator = Op.lte;
+            break;
+          case 'lt':
+            operator = Op.lt;
+            break;
+          case 'in':
+            operator = Op.in;
+            if (!Array.isArray(filterValue)) {
+              filterValue = filterValue.toString().split(',');
+            }
+            break;
+          case 'notin':
+            operator = Op.notIn;
+            if (!Array.isArray(filterValue)) {
+              filterValue = filterValue.toString().split(',');
+            }
+            break;
+          case 'contains':
+            operator = Op.iLike;
+            filterValue = `%${filterValue}%`;
+            break;
+          case 'notcontains':
+            operator = Op.notILike;
+            filterValue = `%${filterValue}%`;
+            break;
+          default:
+            operator = Op.eq;
+        }
 
-      options.where[filterItem.field][operator] = filterValue;
+        options.where[filterItem.field][operator] = filterValue;
+      }
     }
 
     if (sort.length > 0) {
