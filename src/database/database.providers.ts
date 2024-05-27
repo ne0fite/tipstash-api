@@ -1,10 +1,10 @@
 import { Sequelize, SequelizeOptions } from 'sequelize-typescript';
 
 const dbConfig: SequelizeOptions = {
-  username: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASS || 'password',
+  username: process.env.DB_USERNAME || 'postgres',
+  password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_NAME || 'tipstash',
-  host: process.env.DB_HOST || '127.0.0.1',
+  host: process.env.DB_HOSTNAME || '127.0.0.1',
   port: parseInt(process.env.DB_PORT) || 5434,
   dialect: 'postgres',
   dialectOptions: {},
