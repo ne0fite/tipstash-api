@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import Job from '../models/job.entity';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class JobService {
@@ -24,6 +25,8 @@ export class JobService {
   }
 
   async save(job: Job): Promise<Job> {
+    const savedJob = await job.save();
+
     if (job.defaultJob) {
       await this.repository.update(
         {
@@ -32,11 +35,14 @@ export class JobService {
         {
           where: {
             accountId: job.accountId,
+            id: {
+              [Op.ne]: savedJob.id,
+            },
           },
         },
       );
     }
 
-    return job.save();
+    return savedJob;
   }
 }
